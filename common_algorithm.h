@@ -55,11 +55,30 @@ T dfs(vector<vector<T> > a, vector<bool> vis, T source)
     return element_num;
 }
 
+/*
+Input: 
+be: iterator of the begin
+en: Iterator of the end(exculsive)
+target: the element user want to find
+comp: custom compare function, should use to compare which one is less than other one
+
+Output:
+the pair of the lower bound index and upper bound index(the one that input "be" point to is veiw as index 0)
+
+example:
+vector<int> a = {1, 2, 2, 2, 2, 2, 3, 9};
+pair<int, int> test = _binary_search<vector<int>::iterator, int>(a.begin(), a.end(), 2);
+cout << "result is " << test.first << " " << test.second << endl;
+
+//result is 1 6
+
+*/
+
 template <typename Iterate, typename T>
 pair<typename iterator_traits<Iterate>::difference_type, typename iterator_traits<Iterate>::difference_type> _binary_search(
                                 Iterate be, Iterate en, T target, bool (*comp)(T, T) = [](T a, T b){return less<T>()(a,b);})
 {
-    Iterate l = be, r = en;
+    Iterate l = be, r = --en;
     typename iterator_traits<Iterate>::difference_type lower;
     while(l != r)
     {
@@ -79,7 +98,7 @@ pair<typename iterator_traits<Iterate>::difference_type, typename iterator_trait
     lower = distance(be, l);
 
     l = be;
-    r = en;
+    r = --en;
     typename iterator_traits<Iterate>::difference_type upper;
     int i = 0;
     while(l != r && i < 10)
