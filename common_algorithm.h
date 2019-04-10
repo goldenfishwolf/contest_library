@@ -5,80 +5,26 @@
 using namespace std;
 typedef long long ll;
 
-template <typename T>
-T bfs(vector<vector<T> > a, vector<bool> vis, T source)
-{
-    static_assert(is_same<T, int>::value || is_same<T, ll>::value, "this bfs function can only be in type \"int\" or \"long long int\"!\n");
-    T element_num = 1;
-    queue<T> q;
-    q.emplace(source);
-    vis.at(source) = true;
-    while(!q.empty())
-    {
-        T top = q.front();
-        q.pop();
-        for(T i = 0; i < (T)a.at(top).size(); i++)
-        {
-            T tem = a.at(top).at(i);
-            if(vis.at(tem)) continue;
-            vis.at(tem) = true;
-            q.emplace(tem);
-            element_num++;
-        }
-    }
-    return element_num;
-}
-
-template <typename T>
-T dfs(vector<vector<T> > a, vector<bool> vis, T source)
-{
-    static_assert(is_same<T, int>::value || is_same<T, ll>::value, "this dfs function can only be in type \"int\" or \"long long int\"!\n");
-    T element_num = 1;
-    stack<T> s;
-    s.push(source);
-    vis.at(source) = true;
-    while(!s.empty())
-    {
-        T top = s.top();
-        s.pop();
-        for(T i = 0; i < (T)a.at(top).size(); i++)
-        {
-            T tem = a.at(top).at(i);
-            if(vis.at(tem)) continue;
-            vis.at(tem) = true;
-            s.emplace(top);
-            s.emplace(tem);
-            element_num++;
-            break;
-        }
-    }
-    return element_num;
-}
-
 /*
-Input: 
+Input:
 be: iterator of the begin
 en: Iterator of the end(exculsive)
 target: the element user want to find
 comp: custom compare function, should use to compare which one is less than other one
-
 Output:
 the pair of the lower bound index and upper bound index(the one that input "be" point to is veiw as index 0)
-
 example:
 vector<int> a = {1, 2, 2, 2, 2, 2, 3, 9};
 pair<int, int> test = _binary_search<vector<int>::iterator, int>(a.begin(), a.end(), 2);
 cout << "result is " << test.first << " " << test.second << endl;
-
 //result is 1 6
-
 */
 
 template <typename Iterate, typename T>
 pair<typename iterator_traits<Iterate>::difference_type, typename iterator_traits<Iterate>::difference_type> _binary_search(
                                 Iterate be, Iterate en, T target, bool (*comp)(T, T) = [](T a, T b){return less<T>()(a,b);})
 {
-    Iterate l = be, r = --en;
+    Iterate l = be, r = en;
     typename iterator_traits<Iterate>::difference_type lower;
     while(l != r)
     {
@@ -98,12 +44,10 @@ pair<typename iterator_traits<Iterate>::difference_type, typename iterator_trait
     lower = distance(be, l);
 
     l = be;
-    r = --en;
+    r = en;
     typename iterator_traits<Iterate>::difference_type upper;
-    int i = 0;
-    while(l != r && i < 10)
+    while(l != r)
     {
-        i++;
         typename iterator_traits<Iterate>::difference_type half_diff = distance(l, r) / 2;
         Iterate tem_it = l;
         advance(tem_it, half_diff);
@@ -121,6 +65,51 @@ pair<typename iterator_traits<Iterate>::difference_type, typename iterator_trait
 
     return make_pair(lower, upper);
 }
+
+template<typename T>
+pair<T, T> _binary_search(T low, T high, T target, ll max_iter = 1e3, bool (*stop)(T, T) = [](T a, T b){return false;},
+                                    T (*func)(T) = [](T a){return a;}, bool (*comp)(T, T) = [](T a, T b){return less<T>()(a,b);})
+{
+    T l = low;
+    T r = high;
+    T m = (l+r)/ (T)2;
+    for(ll i = 0; l != r && i < max_iter && !stop(func(m),target); i++)
+    {
+        m = (l+r)/ (T)2;
+        if(comp(func(m), target))
+        {
+            l = m;
+        }
+        else
+        {
+            r = m;
+        }
+    }
+
+    T lower = l;
+
+    l = low;
+    r = high;
+    m = (l+r)/ (T)2;
+
+    for(ll i = 0; l != r && i < max_iter && !stop(func(m),target); i++)
+    {
+        m = (l+r)/ (T)2;
+        if(comp(target, func(m)))
+        {
+            r = m;
+        }
+        else
+        {
+            l = m;
+        }
+    }
+
+    T upper = l;
+
+    return make_pair(lower, upper);
+}
+
 
 
 
