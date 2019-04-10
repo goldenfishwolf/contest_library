@@ -213,11 +213,10 @@ class Graph
         {
             vector<Tree<T> > forests;
             map<T, bool> vis;
-            for(map<T, vector<T> >::iterator it = data.begin(); it != data.end(); ++it)
+            for(typename map<T, vector<T> >::iterator it = data.begin(); it != data.end(); ++it)
             {
-                Tree<T> tem_tree;
                 if(vis.find(it->first) != vis.end()) continue;
-                tem_tree = dfs(vis, it->first);
+                Tree<T> tem_tree = dfs(vis, it->first);
                 forests.push_back(tem_tree);
             }
             return forests;
